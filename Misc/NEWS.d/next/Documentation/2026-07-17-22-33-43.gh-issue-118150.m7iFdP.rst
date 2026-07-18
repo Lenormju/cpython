@@ -1,0 +1,3 @@
+Clarify in the :mod:`difflib` documentation that both a custom *isjunk*
+predicate and the *autojunk* heuristic of :class:`~difflib.SequenceMatcher`
+can treat ``(a, b)`` and ``(b, a)`` differently.
