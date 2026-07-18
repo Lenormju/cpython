@@ -194,11 +194,6 @@ diffs. For comparing directories and files, see also, the :mod:`filecmp` module.
 
    See :ref:`difflib-interface` for a more detailed example.
 
-   .. note::
-
-      This uses a :class:`SequenceMatcher` internally, so swapping *a* and
-      *b* can produce different results.
-
 
 .. function:: get_close_matches(word, possibilities, n=3, cutoff=0.6)
 
@@ -259,11 +254,6 @@ diffs. For comparing directories and files, see also, the :mod:`filecmp` module.
       ?  -
       + tree
       + emu
-
-   .. note::
-
-      This uses a :class:`SequenceMatcher` internally, so swapping *a* and
-      *b* can produce different results.
 
 
 .. function:: restore(sequence, which)
@@ -333,11 +323,6 @@ diffs. For comparing directories and files, see also, the :mod:`filecmp` module.
        guido
 
    See :ref:`difflib-interface` for a more detailed example.
-
-   .. note::
-
-      This uses a :class:`SequenceMatcher` internally, so swapping *a* and
-      *b* can produce different results.
 
    .. versionchanged:: 3.15
       Added the *color* parameter.
@@ -416,18 +401,6 @@ The :class:`SequenceMatcher` class has this constructor:
    disabled); *b2j* is a dict mapping the remaining elements of *b* to a list
    of positions where they occur. All three are reset whenever *b* is reset
    with :meth:`set_seqs` or :meth:`set_seq2`.
-
-   .. note::
-
-      Both *isjunk* and the *autojunk* heuristic only consider *b* for filtering
-      out items. Consequently, swapping *a* and *b* can change which items are treated
-      as junk, which can in turn change the matching blocks found by
-      :meth:`get_matching_blocks` and :meth:`get_opcodes`, the value returned by
-      :meth:`ratio`, and the diffs produced by :func:`unified_diff`,
-      :func:`context_diff`, and :func:`ndiff`, all of which build a
-      :class:`SequenceMatcher` internally.
-      A custom *isjunk* has this effect at any sequence length, and the automatic
-      *autojunk* heuristic has the same effect for sequences of 200 or more items.
 
    .. versionadded:: 3.2
       The *bjunk* and *bpopular* attributes.
@@ -518,21 +491,6 @@ The :class:`SequenceMatcher` class has this constructor:
          >>> s.get_matching_blocks()
          [Match(a=0, b=0, size=2), Match(a=3, b=2, size=2), Match(a=5, b=4, size=0)]
 
-      .. note::
-
-         Caution: the result may depend on the order of the arguments. For
-         instance::
-
-            >>> SequenceMatcher(None, 'tide', 'diet').get_matching_blocks()
-            [Match(a=0, b=3, size=1), Match(a=4, b=4, size=0)]
-            >>> SequenceMatcher(None, 'diet', 'tide').get_matching_blocks()
-            [Match(a=0, b=2, size=1), Match(a=2, b=3, size=1), Match(a=4, b=4, size=0)]
-
-         This comes from the matching algorithm itself. Another cause for order
-         causing different outputs, sometimes wildly, is the junk filtering
-         heuristic (a custom *isjunk* at any sequence length, or the
-         automatic *autojunk* heuristic for sequences of 200 or more
-         items). See the :class:`SequenceMatcher` for details.
 
    .. method:: get_opcodes()
 
@@ -574,11 +532,6 @@ The :class:`SequenceMatcher` class has this constructor:
         equal     a[4:6] --> b[3:5]     'cd' --> 'cd'
         insert    a[6:6] --> b[5:6]       '' --> 'f'
 
-      .. note::
-
-         This is derived from :meth:`get_matching_blocks`, and so shares
-         its order-dependence; see the note there.
-
 
    .. method:: get_grouped_opcodes(n=3)
 
@@ -589,11 +542,6 @@ The :class:`SequenceMatcher` class has this constructor:
       have no changes.
 
       The groups are returned in the same format as :meth:`get_opcodes`.
-
-      .. note::
-
-         This is derived from :meth:`get_matching_blocks`, and so shares
-         its order-dependence; see the note there.
 
 
    .. method:: ratio()
@@ -609,11 +557,6 @@ The :class:`SequenceMatcher` class has this constructor:
       :meth:`get_opcodes` hasn't already been called, in which case you may want
       to try :meth:`quick_ratio` or :meth:`real_quick_ratio` first to get an
       upper bound.
-
-      .. note::
-
-         This is derived from :meth:`get_matching_blocks`, and so shares
-         its order-dependence; see the note there.
 
 
    .. method:: quick_ratio()
