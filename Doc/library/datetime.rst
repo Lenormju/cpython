@@ -1286,6 +1286,34 @@ Supported operations:
 | | ``datetime1 >= datetime2``          |                                |
 +---------------------------------------+--------------------------------+
 
+.. _datetime-wall-time-arithmetic:
+
+Adding or subtracting a :class:`timedelta`, and subtracting naive datetimes or
+aware datetimes that share the same :attr:`~.datetime.tzinfo` object, uses
+*wall time* semantics: it works on the local date and time fields, as read on
+a clock, and ignores :attr:`~.datetime.fold` and the UTC offset. Adding
+``timedelta(days=1)`` gives the same clock time on the next day, whether or
+not a UTC offset transition happens in between. Subtracting aware datetimes
+that have different :attr:`!tzinfo` objects uses *absolute time* semantics
+instead: the result is the time elapsed between the two instants.
+
+To use absolute time semantics within a single time zone, do the arithmetic
+in UTC::
+
+   >>> import datetime as dt
+   >>> from zoneinfo import ZoneInfo
+   >>> paris = ZoneInfo("Europe/Paris")
+   >>> first = dt.datetime(2026, 10, 25, 2, 30, tzinfo=paris)
+   >>> second = first.replace(fold=1)
+   >>> second - first
+   datetime.timedelta(0)
+   >>> second.astimezone(dt.UTC) - first.astimezone(dt.UTC)
+   datetime.timedelta(seconds=3600)
+   >>> print(first + dt.timedelta(hours=1))
+   2026-10-25 03:30:00+01:00
+   >>> print((first.astimezone(dt.UTC) + dt.timedelta(hours=1)).astimezone(paris))
+   2026-10-25 02:30:00+01:00
+
 (1)
    ``datetime2`` is a duration of ``timedelta`` removed from ``datetime1``, moving forward in
    time if ``timedelta.days > 0``, or backward if ``timedelta.days < 0``. The
@@ -1305,10 +1333,10 @@ Supported operations:
    both operands are naive, or if both are aware. If one is aware and the other is
    naive, :exc:`TypeError` is raised.
 
-   If both are naive, or both are aware and have the same :attr:`~.datetime.tzinfo` attribute,
-   the :attr:`~.datetime.tzinfo` attributes are ignored, and the result is a :class:`timedelta`
-   object ``t`` such that ``datetime2 + t == datetime1``. No time zone adjustments
-   are done in this case.
+   If both are naive, or both are aware and share the same :attr:`~.datetime.tzinfo`
+   object, :attr:`~.datetime.fold` is ignored and the result is a :class:`timedelta`
+   object ``t`` such that ``datetime2 + t == datetime1``, using
+   :ref:`wall time semantics <datetime-wall-time-arithmetic>`.
 
    If both are aware and have different :attr:`~.datetime.tzinfo` attributes, ``a-b`` acts
    as if ``a`` and ``b`` were first converted to naive UTC datetimes. The

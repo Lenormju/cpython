@@ -46,8 +46,9 @@ method or :meth:`datetime.astimezone <datetime.datetime.astimezone>`::
     >>> when.tzname()
     'PDT'
 
-Datetimes constructed in this way are compatible with datetime arithmetic and
-handle daylight saving time transitions with no further intervention::
+Arithmetic on these datetimes uses :ref:`wall time semantics
+<datetime-wall-time-arithmetic>`: adding a day gives the same clock time on
+the next day, with that day's UTC offset, even though 25 hours have elapsed::
 
     >>> when_add = when + dt.timedelta(days=1)
 
